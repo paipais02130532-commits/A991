@@ -6,14 +6,13 @@
   <title>𝐀𝐬𝐬𝐞𝐧⁹⁹車資計算器</title>
   <style>
     :root {
-      --primary-color: #6B7C84;   /* LOGO 主色 */
-      --secondary-color: #4F606A; /* 按鈕色 */
+      --primary-color: #6B7C84;
+      --secondary-color: #4F606A;
       --bg-color: #F5F6F7;
       --card-bg: #E3E8EB;
       --text-color: #333333;
       --button-hover: #3B4B53;
     }
-
     body {
       font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
       background: var(--bg-color);
@@ -24,7 +23,6 @@
       padding-top: 20px;
       color: var(--text-color);
     }
-
     nav {
       width: 100%;
       background: var(--primary-color);
@@ -40,12 +38,7 @@
       align-items: center;
       gap: 8px;
     }
-
-    nav img {
-      width: 100px;
-      height: auto;
-    }
-
+    nav img { width: 100px; height: auto; }
     .card {
       background: var(--card-bg);
       padding: 28px;
@@ -55,18 +48,9 @@
       margin-bottom: 20px;
       transition: transform 0.2s;
     }
-
     .card:hover { transform: translateY(-4px); }
-
-    h1 {
-      font-size: 22px;
-      margin-bottom: 18px;
-      text-align: center;
-      color: var(--primary-color);
-    }
-
+    h1 { font-size: 22px; margin-bottom: 18px; text-align: center; color: var(--primary-color); }
     label { display: block; margin-top: 14px; font-size: 14px; }
-
     input {
       width: 100%;
       padding: 10px;
@@ -75,7 +59,6 @@
       border: 1px solid #ccc;
       font-size: 14px;
     }
-
     button {
       margin-top: 24px;
       width: 100%;
@@ -89,19 +72,16 @@
       cursor: pointer;
       transition: background 0.3s, transform 0.2s;
     }
-
     button:hover {
       background: var(--button-hover);
       transform: translateY(-2px);
     }
-
     #map {
       width: 100%;
       height: 300px;
       border-radius: 20px;
       margin-top: 20px;
     }
-
     .result {
       margin-top: 18px;
       font-size: 18px;
@@ -133,10 +113,9 @@
 
   <div id="map"></div>
 
-  <!-- Google Maps API -->
-  <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyAL4_x2YFpSR0SY8ybPXLXy3U5-El1iHH4&callback=initMap&libraries=places"></script>
   <script>
     let map, directionsService, directionsRenderer;
+    let originAutocomplete, destinationAutocomplete;
 
     function initMap() {
       map = new google.maps.Map(document.getElementById("map"), {
@@ -145,6 +124,12 @@
       });
       directionsService = new google.maps.DirectionsService();
       directionsRenderer = new google.maps.DirectionsRenderer({ map: map });
+
+      // 自動完成地址功能
+      const originInput = document.getElementById('origin');
+      const destinationInput = document.getElementById('destination');
+      originAutocomplete = new google.maps.places.Autocomplete(originInput);
+      destinationAutocomplete = new google.maps.places.Autocomplete(destinationInput);
     }
 
     function calculateFare() {
@@ -189,9 +174,11 @@
         }
       });
     }
+  </script>
 
-    initMap();
+  <!-- 使用你的 API Key -->
+  <script async
+    src="https://maps.googleapis.com/maps/api/js?key=AIzaSyAL4_x2YFpSR0SY8ybPXLXy3U5-El1iHH4&callback=initMap&libraries=places">
   </script>
 </body>
 </html>
-
