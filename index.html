@@ -5,14 +5,13 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>𝐀𝐬𝐬𝐞𝐧⁹⁹車資計算器</title>
   <style>
-    /* ASSEN99 官方風格配色 */
     :root {
       --primary-color: #6B7C84;   /* LOGO 主色 */
       --secondary-color: #4F606A; /* 按鈕色 */
-      --bg-color: #F5F6F7;         /* 背景色 */
-      --card-bg: #E3E8EB;          /* 卡片底色 */
+      --bg-color: #F5F6F7;
+      --card-bg: #E3E8EB;
       --text-color: #333333;
-      --button-hover: #3B4B53;     /* 按鈕 hover */
+      --button-hover: #3B4B53;
     }
 
     body {
@@ -20,7 +19,6 @@
       background: var(--bg-color);
       display: flex;
       flex-direction: column;
-      justify-content: flex-start;
       align-items: center;
       min-height: 100vh;
       padding-top: 20px;
@@ -58,9 +56,7 @@
       transition: transform 0.2s;
     }
 
-    .card:hover {
-      transform: translateY(-4px);
-    }
+    .card:hover { transform: translateY(-4px); }
 
     h1 {
       font-size: 22px;
@@ -69,11 +65,7 @@
       color: var(--primary-color);
     }
 
-    label {
-      display: block;
-      margin-top: 14px;
-      font-size: 14px;
-    }
+    label { display: block; margin-top: 14px; font-size: 14px; }
 
     input {
       width: 100%;
@@ -103,6 +95,13 @@
       transform: translateY(-2px);
     }
 
+    #map {
+      width: 100%;
+      height: 300px;
+      border-radius: 20px;
+      margin-top: 20px;
+    }
+
     .result {
       margin-top: 18px;
       font-size: 18px;
@@ -121,43 +120,77 @@
   <div class="card">
     <h1>車資計算器</h1>
 
-    <label>行駛距離（公里）</label>
-    <input type="number" id="distanceKm" placeholder="輸入行駛距離" />
+    <label>起點地址</label>
+    <input type="text" id="origin" placeholder="輸入起點地址">
 
-    <label>行車時間（分鐘）</label>
-    <input type="number" id="travelTime" placeholder="輸入行車時間" />
+    <label>終點地址</label>
+    <input type="text" id="destination" placeholder="輸入終點地址">
 
     <button onclick="calculateFare()">計算車資</button>
 
     <div class="result" id="result">—</div>
   </div>
 
-  <script>
-    function calculateFare() {
-      const distanceKm = Number(document.getElementById('distanceKm').value);
-      const travelTime = Number(document.getElementById('travelTime').value);
+  <div id="map"></div>
 
-      if (distanceKm <= 0 || travelTime < 0) {
-        document.getElementById('result').innerText = '請輸入正確距離與行車時間';
+  <!-- Google Maps API -->
+  <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyBc2E-iMnfCRaNyTmVqdL_ZhEx3BRUCoC4&libraries=places"></script>
+  <script>
+    let map, directionsService, directionsRenderer;
+
+    function initMap() {
+      map = new google.maps.Map(document.getElementById("map"), {
+        center: { lat: 25.0330, lng: 121.5654 },
+        zoom: 13
+      });
+      directionsService = new google.maps.DirectionsService();
+      directionsRenderer = new google.maps.DirectionsRenderer({ map: map });
+    }
+
+    function calculateFare() {
+      const origin = document.getElementById('origin').value;
+      const destination = document.getElementById('destination').value;
+
+      if (!origin || !destination) {
+        document.getElementById('result').innerText = '請輸入完整的起點和終點地址';
         return;
       }
 
-      const baseFare = 100;
-      const perKmRate = 15;
-      const perMinuteRate = 3;
-      const extraRateAfter16Km = 10;
+      directionsService.route({
+        origin: origin,
+        destination: destination,
+        travelMode: 'DRIVING'
+      }, (response, status) => {
+        if (status === 'OK') {
+          directionsRenderer.setDirections(response);
 
-      let distanceFare = distanceKm <= 15 
-        ? distanceKm * perKmRate 
-        : 15 * perKmRate + (distanceKm - 15) * (perKmRate + extraRateAfter16Km);
+          const route = response.routes[0].legs[0];
+          const distanceKm = route.distance.value / 1000;
+          const travelTime = route.duration.value / 60;
 
-      const travelFare = travelTime * perMinuteRate;
-      const totalFare = baseFare + distanceFare + travelFare;
+          const baseFare = 100;
+          const perKmRate = 15;
+          const perMinuteRate = 3;
+          const extraRateAfter16Km = 10;
 
-      document.getElementById('result').innerText = `距離：${distanceKm.toFixed(1)} 公里\n行車時間：約 ${travelTime.toFixed(0)} 分鐘\n預估車資：${totalFare.toFixed(0)} 元`;
+          let distanceFare = distanceKm <= 15
+            ? distanceKm * perKmRate
+            : 15 * perKmRate + (distanceKm - 15) * (perKmRate + extraRateAfter16Km);
+
+          const travelFare = travelTime * perMinuteRate;
+          const totalFare = baseFare + distanceFare + travelFare;
+
+          document.getElementById('result').innerText =
+            `距離：約 ${distanceKm.toFixed(1)} 公里\n` +
+            `行車時間：約 ${travelTime.toFixed(0)} 分鐘\n` +
+            `預估車資：${totalFare.toFixed(0)} 元`;
+        } else {
+          document.getElementById('result').innerText = '無法計算路線，請確認地址是否正確';
+        }
+      });
     }
+
+    initMap();
   </script>
 </body>
 </html>
-
-
