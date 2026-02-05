@@ -1,0 +1,161 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>𝐀𝐬𝐬𝐞𝐧⁹⁹車資計算器</title>
+  <style>
+    /* ASSEN99 官方風格配色 */
+    :root {
+      --primary-color: #6B7C84;   /* LOGO 主色 */
+      --secondary-color: #4F606A; /* 按鈕色 */
+      --bg-color: #F5F6F7;         /* 背景色 */
+      --card-bg: #E3E8EB;          /* 卡片底色 */
+      --text-color: #333333;
+      --button-hover: #3B4B53;     /* 按鈕 hover */
+    }
+
+    body {
+      font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      background: var(--bg-color);
+      display: flex;
+      flex-direction: column;
+      justify-content: flex-start;
+      align-items: center;
+      min-height: 100vh;
+      padding-top: 20px;
+      color: var(--text-color);
+    }
+
+    nav {
+      width: 100%;
+      background: var(--primary-color);
+      color: white;
+      padding: 12px 0;
+      text-align: center;
+      font-size: 20px;
+      font-weight: bold;
+      margin-bottom: 20px;
+      border-radius: 0 0 20px 20px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 8px;
+    }
+
+    nav img {
+      width: 100px;
+      height: auto;
+    }
+
+    .card {
+      background: var(--card-bg);
+      padding: 28px;
+      border-radius: 20px;
+      width: 360px;
+      box-shadow: 0 12px 30px rgba(0,0,0,0.12);
+      margin-bottom: 20px;
+      transition: transform 0.2s;
+    }
+
+    .card:hover {
+      transform: translateY(-4px);
+    }
+
+    h1 {
+      font-size: 22px;
+      margin-bottom: 18px;
+      text-align: center;
+      color: var(--primary-color);
+    }
+
+    label {
+      display: block;
+      margin-top: 14px;
+      font-size: 14px;
+    }
+
+    input {
+      width: 100%;
+      padding: 10px;
+      margin-top: 6px;
+      border-radius: 10px;
+      border: 1px solid #ccc;
+      font-size: 14px;
+    }
+
+    button {
+      margin-top: 24px;
+      width: 100%;
+      padding: 12px;
+      border: none;
+      border-radius: 12px;
+      background: var(--secondary-color);
+      color: white;
+      font-size: 16px;
+      font-weight: bold;
+      cursor: pointer;
+      transition: background 0.3s, transform 0.2s;
+    }
+
+    button:hover {
+      background: var(--button-hover);
+      transform: translateY(-2px);
+    }
+
+    .result {
+      margin-top: 18px;
+      font-size: 18px;
+      text-align: center;
+      font-weight: bold;
+      white-space: pre-line;
+    }
+  </style>
+</head>
+<body>
+  <nav>
+    <img src="A99LOGO.png" alt="ASSEN99 LOGO">
+    𝐀𝐬𝐬𝐞𝐧⁹⁹車資計算器
+  </nav>
+
+  <div class="card">
+    <h1>車資計算器</h1>
+
+    <label>行駛距離（公里）</label>
+    <input type="number" id="distanceKm" placeholder="輸入行駛距離" />
+
+    <label>行車時間（分鐘）</label>
+    <input type="number" id="travelTime" placeholder="輸入行車時間" />
+
+    <button onclick="calculateFare()">計算車資</button>
+
+    <div class="result" id="result">—</div>
+  </div>
+
+  <script>
+    function calculateFare() {
+      const distanceKm = Number(document.getElementById('distanceKm').value);
+      const travelTime = Number(document.getElementById('travelTime').value);
+
+      if (distanceKm <= 0 || travelTime < 0) {
+        document.getElementById('result').innerText = '請輸入正確距離與行車時間';
+        return;
+      }
+
+      const baseFare = 100;
+      const perKmRate = 15;
+      const perMinuteRate = 3;
+      const extraRateAfter16Km = 10;
+
+      let distanceFare = distanceKm <= 15 
+        ? distanceKm * perKmRate 
+        : 15 * perKmRate + (distanceKm - 15) * (perKmRate + extraRateAfter16Km);
+
+      const travelFare = travelTime * perMinuteRate;
+      const totalFare = baseFare + distanceFare + travelFare;
+
+      document.getElementById('result').innerText = `距離：${distanceKm.toFixed(1)} 公里\n行車時間：約 ${travelTime.toFixed(0)} 分鐘\n總車資：${totalFare.toFixed(0)} 元`;
+    }
+  </script>
+</body>
+</html>
