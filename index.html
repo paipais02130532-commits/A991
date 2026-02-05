@@ -82,9 +82,7 @@
       font-size: 14px;
     }
 
-    .checkbox-row input {
-      margin-right: 8px;
-    }
+    .checkbox-row input { margin-right: 8px; }
 
     button {
       margin-top: 18px;
@@ -127,7 +125,6 @@
       margin-bottom: 30px;
     }
 
-    /* 修正 Google 地址下拉被遮挡 */
     .pac-container { z-index: 9999 !important; }
   </style>
 </head>
@@ -190,7 +187,6 @@
   }
 
   function calculateFare() {
-    // ✅ 获取 DOM 元素
     const originInput = document.getElementById('origin');
     const destinationInput = document.getElementById('destination');
     const avoidHighwaysInput = document.getElementById('avoidHighways');
@@ -247,10 +243,13 @@
 距離：約 ${lastData.km.toFixed(1)} 公里
 預估車資：${lastData.fare.toFixed(0)} 元`;
 
+    // 打開 LINE 官方聊天窗口（@751cgaza）並帶文字
     window.open(
-      `https://line.me/R/msg/text/?${encodeURIComponent(msg)}`,
+      `https://line.me/R/ti/p/@751cgaza`,
       '_blank'
     );
+    // ⚠️ 用戶需要點擊一次送出
+    alert("LINE 官方聊天已開啟，請在 LINE 點擊「傳送」發送訊息");
   }
 </script>
 
