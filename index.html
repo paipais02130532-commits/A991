@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>𝐀𝐬𝐬𝐞𝐧⁹⁹車資試算</title>
+  <title>𝐀𝐬𝐬𝐞𝐧⁹⁹車資計算器</title>
   <style>
     :root {
       --primary-color: #6B7C84;
@@ -60,18 +60,33 @@
       font-size: 14px;
     }
     input[type="checkbox"] { margin-right: 6px; }
+    button {
+      margin-top: 24px;
+      width: 100%;
+      padding: 12px;
+      border: none;
+      border-radius: 12px;
+      background: var(--secondary-color);
+      color: white;
+      font-size: 16px;
+      font-weight: bold;
+      cursor: pointer;
+      transition: background 0.3s, transform 0.2s;
+    }
+    button:hover { background: var(--button-hover); transform: translateY(-2px); }
     #map { width: 100%; height: 300px; border-radius: 20px; margin-top: 20px; }
     .result { margin-top: 18px; font-size: 18px; text-align: center; font-weight: bold; white-space: pre-line; }
+    #tip { margin-top: 12px; font-size: 13px; color: #555; text-align: left; line-height: 1.5; }
   </style>
 </head>
 <body>
   <nav>
     <img src="A99LOGO.png" alt="ASSEN99 LOGO">
-    𝐀𝐬𝐬𝐞𝐧⁹⁹車資試算
+    𝐀𝐬𝐬𝐞𝐧⁹⁹車資計算器
   </nav>
 
   <div class="card">
-    <h1>車資試算</h1>
+    <h1>車資計算器</h1>
 
     <label>起點地址</label>
     <input type="text" id="origin" placeholder="輸入起點地址">
@@ -83,6 +98,13 @@
     <label><input type="checkbox" id="avoidTolls"> 避開收費道路</label>
 
     <div class="result" id="result">—</div>
+
+    <!-- 小提示欄位 -->
+    <div id="tip">
+      💡 溫馨提醒：預估車資僅供參考<br>
+      ▪️ 行車時間、路況皆會影響計費<br>
+      ▪️ 最後收費會依實際跳錶為主呦
+    </div>
   </div>
 
   <div id="map"></div>
@@ -106,8 +128,9 @@
       // 即時計算
       const inputs = ['origin','destination','avoidHighways','avoidTolls'];
       inputs.forEach(id => {
-        document.getElementById(id).addEventListener('input', calculateFare);
-        document.getElementById(id).addEventListener('change', calculateFare); // checkbox
+        const el = document.getElementById(id);
+        el.addEventListener('input', calculateFare);
+        el.addEventListener('change', calculateFare); // checkbox
       });
     }
 
@@ -163,4 +186,3 @@
   </script>
 </body>
 </html>
-
