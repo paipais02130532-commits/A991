@@ -42,7 +42,10 @@
       gap: 8px;
     }
 
-    nav img { width: 100px; }
+    nav img {
+      width: 100px;
+      height: auto;
+    }
 
     .card {
       background: var(--card-bg);
@@ -75,19 +78,12 @@
       font-size: 14px;
     }
 
-    .checkbox-row {
-      display: flex;
-      align-items: center;
-      margin-top: 12px;
-      font-size: 14px;
-    }
-
-    .checkbox-row input {
-      margin-right: 8px;
+    input[type="checkbox"] {
+      margin-right: 6px;
     }
 
     button {
-      margin-top: 18px;
+      margin-top: 22px;
       width: 100%;
       padding: 12px;
       border: none;
@@ -101,15 +97,6 @@
 
     button:hover {
       background: var(--button-hover);
-    }
-
-    .line-btn {
-      background: #06C755;
-      margin-top: 12px;
-    }
-
-    .line-btn:hover {
-      background: #04B14F;
     }
 
     .result {
@@ -139,117 +126,103 @@
 
 <body>
 
-<nav>
-  <img src="A99LOGO.png" alt="ASSEN99 LOGO">
-  𝐀𝐬𝐬𝐞𝐧⁹⁹車資試算
-</nav>
+  <nav>
+    <img src="A99LOGO.png" alt="ASSEN99 LOGO">
+    𝐀𝐬𝐬𝐞𝐧⁹⁹車資試算
+  </nav>
 
-<div class="card">
-  <h1>車資試算</h1>
+  <div class="card">
+    <h1>車資試算</h1>
 
-  <label>起點地址</label>
-  <input type="text" id="origin">
+    <label>起點地址</label>
+    <input type="text" id="origin" placeholder="輸入起點地址">
 
-  <label>終點地址</label>
-  <input type="text" id="destination">
+    <label>終點地址</label>
+    <input type="text" id="destination" placeholder="輸入終點地址">
 
-  <div class="checkbox-row">
-    <input type="checkbox" id="avoidHighways">
-    <label for="avoidHighways">避開高速公路</label>
+    <label><input type="checkbox" id="avoidHighways"> 避開高速公路</label>
+    <label><input type="checkbox" id="avoidTolls"> 避開收費道路</label>
+
+    <button onclick="calculateFare()">計算車資</button>
+
+    <div class="result" id="result">—</div>
+
+    <div id="tip">
+      💡 溫馨提醒：預估車資僅供參考<br>
+      ▪️ 行車時間、路況皆會影響計費<br>
+      ▪️ 最後收費會依實際跳錶為主呦
+    </div>
   </div>
 
-  <div class="checkbox-row">
-    <input type="checkbox" id="avoidTolls">
-    <label for="avoidTolls">避開收費道路</label>
-  </div>
+  <div id="map"></div>
 
-  <button onclick="calculateFare()">計算車資</button>
-  <button class="line-btn" onclick="sendToLine()">📩 傳送到 LINE 官方</button>
+  <script>
+    let map, directionsService, directionsRenderer;
 
-  <div class="result" id="result">—</div>
+    function initMap() {
+      map = new google.maps.Map(document.getElementById("map"), {
+        center: { lat: 25.0330, lng: 121.5654 },
+        zoom: 13
+      });
 
-  <div id="tip">
-    💡 溫馨提醒：預估車資僅供參考<br>
-    ▪️ 行車時間、路況皆會影響計費<br>
-    ▪️ 最後收費會依實際跳錶為主呦
-  </div>
-</div>
+      directionsService = new google.maps.DirectionsService();
+      directionsRenderer = new google.maps.DirectionsRenderer({ map });
 
-<div id="map"></div>
-
-<script>
-  let map, directionsService, directionsRenderer;
-  let lastData = null;
-
-  function initMap() {
-    map = new google.maps.Map(document.getElementById("map"), {
-      center: { lat: 25.0330, lng: 121.5654 },
-      zoom: 13
-    });
-
-    directionsService = new google.maps.DirectionsService();
-    directionsRenderer = new google.maps.DirectionsRenderer({ map });
-
-    new google.maps.places.Autocomplete(origin);
-    new google.maps.places.Autocomplete(destination);
-  }
-
-  function calculateFare() {
-    const o = origin.value;
-    const d = destination.value;
-
-    if (!o || !d) {
-      result.innerText = '請輸入完整的起點與終點地址';
-      return;
+      new google.maps.places.Autocomplete(document.getElementById('origin'));
+      new google.maps.places.Autocomplete(document.getElementById('destination'));
     }
 
-    directionsService.route({
-      origin: o,
-      destination: d,
-      travelMode: 'DRIVING',
-      avoidHighways: avoidHighways.checked,
-      avoidTolls: avoidTolls.checked
-    }, (res, status) => {
-      if (status !== 'OK') {
-        result.innerText = '路線計算失敗';
+    function calculateFare() {
+      const origin = document.getElementById('origin').value;
+      const destination = document.getElementById('destination').value;
+      const avoidHighways = document.getElementById('avoidHighways').checked;
+      const avoidTolls = document.getElementById('avoidTolls').checked;
+
+      if (!origin || !destination) {
+        document.getElementById('result').innerText = '請輸入完整的起點與終點地址';
         return;
       }
 
-      directionsRenderer.setDirections(res);
-      const leg = res.routes[0].legs[0];
+      directionsService.route({
+        origin,
+        destination,
+        travelMode: 'DRIVING',
+        avoidHighways,
+        avoidTolls
+      }, (res, status) => {
+        if (status !== 'OK') {
+          document.getElementById('result').innerText = '路線計算失敗，請確認地址';
+          return;
+        }
 
-      const km = leg.distance.value / 1000;
-      const min = leg.duration.value / 60;
-      const fare = 100 + (km <= 15 ? km * 15 : 15 * 15 + (km - 15) * 25) + min * 3;
+        directionsRenderer.setDirections(res);
 
-      lastData = { o, d, km, min, fare };
+        const leg = res.routes[0].legs[0];
+        const distanceKm = leg.distance.value / 1000;
+        const travelMin = leg.duration.value / 60;
 
-      result.innerText =
-        `距離：約 ${km.toFixed(1)} 公里\n時間：約 ${min.toFixed(0)} 分鐘\n預估車資：${fare.toFixed(0)} 元`;
-    });
-  }
+        const baseFare = 100;
+        const perKm = 15;
+        const perMin = 3;
+        const extraAfter15 = 10;
 
-  function sendToLine() {
-    if (!lastData) {
-      alert('請先計算車資');
-      return;
+        let distanceFare = distanceKm <= 15
+          ? distanceKm * perKm
+          : 15 * perKm + (distanceKm - 15) * (perKm + extraAfter15);
+
+        const total = baseFare + distanceFare + travelMin * perMin;
+
+        document.getElementById('result').innerText =
+          `距離：約 ${distanceKm.toFixed(1)} 公里\n` +
+          `時間：約 ${travelMin.toFixed(0)} 分鐘\n` +
+          `預估車資：${total.toFixed(0)} 元`;
+      });
     }
+  </script>
 
-    const msg =
-`🚕 ASSEN⁹⁹ 叫車需求
-起點：${lastData.o}
-終點：${lastData.d}
-距離：約 ${lastData.km.toFixed(1)} 公里
-預估車資：${lastData.fare.toFixed(0)} 元`;
-
-    const url = `https://line.me/R/msg/text/?${encodeURIComponent(msg)}`;
-    window.open(url, '_blank');
-  }
-</script>
-
-<script async
-  src="https://maps.googleapis.com/maps/api/js?key=AIzaSyAL4_x2YFpSR0SY8ybPXLXy3U5-El1iHH4&libraries=places&callback=initMap">
-</script>
+  <script async
+    src="https://maps.googleapis.com/maps/api/js?key=AIzaSyAL4_x2YFpSR0SY8ybPXLXy3U5-El1iHH4&libraries=places&callback=initMap">
+  </script>
 
 </body>
 </html>
