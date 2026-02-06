@@ -1,277 +1,232 @@
 <!DOCTYPE html>
 <html lang="zh-Hant">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>𝐀𝐬𝐬𝐞𝐧⁹⁹車資試算</title>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>𝐀𝐬𝐬𝐞𝐧⁹⁹車資試算</title>
 
-  <style>
-    :root {
-      --primary-color: #6B7C84;
-      --secondary-color: #4F606A;
-      --bg-color: #F5F6F7;
-      --card-bg: #E3E8EB;
-      --text-color: #333333;
-      --button-hover: #3B4B53;
-    }
+<style>
+:root {
+  --primary:#6B7C84;
+  --secondary:#4F606A;
+  --bg:#F5F6F7;
+  --card:#E3E8EB;
+  --text:#333;
+  --hover:#3B4B53;
+}
 
-    body {
-      font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
-      background: var(--bg-color);
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      min-height: 100vh;
-      padding-top: 20px;
-      color: var(--text-color);
-    }
+body{
+  font-family:system-ui;
+  background:var(--bg);
+  display:flex;
+  flex-direction:column;
+  align-items:center;
+  padding-top:20px;
+}
 
-    nav {
-      width: 100%;
-      background: var(--primary-color);
-      color: white;
-      padding: 12px 0;
-      text-align: center;
-      font-size: 20px;
-      font-weight: bold;
-      margin-bottom: 20px;
-      border-radius: 0 0 20px 20px;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      gap: 8px;
-    }
+nav{
+  width:100%;
+  background:var(--primary);
+  color:#fff;
+  text-align:center;
+  padding:12px 0;
+  border-radius:0 0 20px 20px;
+}
 
-    nav img { width: 100px; }
+nav img{width:100px}
 
-    .card {
-      background: var(--card-bg);
-      padding: 28px;
-      border-radius: 20px;
-      width: 360px;
-      box-shadow: 0 12px 30px rgba(0,0,0,0.12);
-      margin-bottom: 20px;
-    }
+.card{
+  width:360px;
+  background:var(--card);
+  padding:28px;
+  border-radius:20px;
+  box-shadow:0 12px 30px rgba(0,0,0,.12);
+}
 
-    h1 {
-      font-size: 22px;
-      margin-bottom: 18px;
-      text-align: center;
-      color: var(--primary-color);
-    }
+h1{text-align:center;color:var(--primary)}
 
-    label {
-      display: block;
-      margin-top: 14px;
-      font-size: 14px;
-    }
+label{display:block;margin-top:14px;font-size:14px}
 
-    input[type="text"] {
-      width: 100%;
-      padding: 10px;
-      margin-top: 6px;
-      border-radius: 10px;
-      border: 1px solid #ccc;
-      font-size: 14px;
-    }
+input{
+  width:100%;
+  padding:10px;
+  margin-top:6px;
+  border-radius:10px;
+  border:1px solid #ccc;
+}
 
-    .checkbox-row {
-      display: flex;
-      align-items: center;
-      margin-top: 12px;
-      font-size: 14px;
-    }
+.checkbox-row{
+  display:flex;
+  align-items:center;
+  margin-top:10px;
+}
 
-    .checkbox-row input { margin-right: 8px; }
+.checkbox-row input{margin-right:8px}
 
-    button {
-      margin-top: 18px;
-      width: 100%;
-      padding: 12px;
-      border: none;
-      border-radius: 12px;
-      background: var(--secondary-color);
-      color: white;
-      font-size: 16px;
-      font-weight: bold;
-      cursor: pointer;
-    }
+button{
+  width:100%;
+  margin-top:14px;
+  padding:12px;
+  border:none;
+  border-radius:12px;
+  font-size:16px;
+  font-weight:bold;
+  cursor:pointer;
+  background:var(--secondary);
+  color:#fff;
+}
 
-    button:hover { background: var(--button-hover); }
+button:hover{background:var(--hover)}
 
-    .line-btn { background: #06C755; }
-    .line-btn:hover { background: #04B14F; }
+.line-main{
+  background:#06C755;
+}
+.line-main:hover{background:#04B14F}
 
-    .result {
-      margin-top: 16px;
-      font-size: 18px;
-      text-align: center;
-      font-weight: bold;
-      white-space: pre-line;
-    }
+.line-direct{
+  background:var(--primary);
+}
+.line-direct:hover{background:var(--hover)}
 
-    #lineMsgContainer {
-      margin-top: 10px;
-      background: #fff;
-      border: 1px dashed #4F606A;
-      padding: 10px;
-      border-radius: 10px;
-      font-size: 14px;
-      white-space: pre-wrap;
-    }
+.result{
+  margin-top:14px;
+  text-align:center;
+  font-weight:bold;
+  white-space:pre-line;
+}
 
-    #tip {
-      margin-top: 10px;
-      font-size: 13px;
-      color: #555;
-      text-align: center;
-      line-height: 1.5;
-    }
+#lineMsgContainer{
+  margin-top:10px;
+  background:#fff;
+  border:1px dashed var(--secondary);
+  padding:10px;
+  border-radius:10px;
+  font-size:14px;
+}
 
-    #map {
-      width: 360px;
-      height: 300px;
-      border-radius: 20px;
-      margin-bottom: 30px;
-    }
+#tip{
+  margin-top:10px;
+  font-size:13px;
+  text-align:center;
+  color:#555;
+}
 
-    .pac-container { z-index: 9999 !important; }
-  </style>
+#map{
+  width:360px;
+  height:300px;
+  border-radius:20px;
+  margin:20px 0;
+}
+
+.pac-container{z-index:9999!important}
+</style>
 </head>
 
 <body>
 
 <nav>
-  <img src="A99LOGO.png" alt="ASSEN99 LOGO">
+  <img src="A99LOGO.png">
   𝐀𝐬𝐬𝐞𝐧⁹⁹車資試算
 </nav>
 
 <div class="card">
-  <h1>車資試算</h1>
+<h1>車資試算</h1>
 
-  <label>起點地址</label>
-  <input type="text" id="origin" placeholder="輸入起點地址">
+<label>起點地址</label>
+<input id="origin" placeholder="輸入起點地址">
 
-  <label>終點地址</label>
-  <input type="text" id="destination" placeholder="輸入終點地址">
+<label>終點地址</label>
+<input id="destination" placeholder="輸入終點地址">
 
-  <div class="checkbox-row">
-    <input type="checkbox" id="avoidHighways">
-    <label for="avoidHighways">避開高速公路</label>
-  </div>
+<div class="checkbox-row">
+<input type="checkbox" id="avoidHighways">避開高速公路
+</div>
 
-  <div class="checkbox-row">
-    <input type="checkbox" id="avoidTolls">
-    <label for="avoidTolls">避開收費道路</label>
-  </div>
+<div class="checkbox-row">
+<input type="checkbox" id="avoidTolls">避開收費道路
+</div>
 
-  <button onclick="calculateFare()">計算車資</button>
-  <button class="line-btn" onclick="sendToLine()">一鍵複製📩傳送到LINE官方</button>
+<button onclick="calculateFare()">計算車資</button>
 
-  <div class="result" id="result">—</div>
-  <div id="lineMsgContainer"></div>
+<button class="line-main" onclick="sendToLine()">
+一鍵複製📩傳送到 LINE 官方
+</button>
 
-  <div id="tip">
-    💡 溫馨提醒：預估車資僅供參考<br>
-    ▪️ 行車時間、路況皆會影響計費<br>
-    ▪️ 最後收費會依實際跳錶為主呦
-  </div>
+<button class="line-direct" onclick="openLineOnly()">
+直接前往【 Assen⁹⁹ 】LINE官方
+</button>
+
+<div class="result" id="result">—</div>
+<div id="lineMsgContainer"></div>
+
+<div id="tip">
+💡 溫馨提醒：預估車資僅供參考<br>
+▪️ 行車時間、路況皆會影響計費<br>
+▪️ 最後收費會依實際跳錶為主
+</div>
 </div>
 
 <div id="map"></div>
 
 <script>
-  let map, directionsService, directionsRenderer;
-  let lastData = null;
+let map,ds,dr,lastData=null;
 
-  function cleanAddress(text) {
-    return text
-      .replace(/\[?(台灣|台湾)\]?/g, '')
-      .replace(/,\s*/g, '')
-      .trim();
-  }
+function clean(t){
+ return t.replace(/\[?(台灣|台湾)\]?/g,'').replace(/,\s*/g,'').trim();
+}
 
-  function initMap() {
-    map = new google.maps.Map(document.getElementById("map"), {
-      center: { lat: 25.0330, lng: 121.5654 },
-      zoom: 13
-    });
+function initMap(){
+ map=new google.maps.Map(mapDiv={document.getElementById("map")},{
+  center:{lat:25.033,lng:121.5654},zoom:13});
+ ds=new google.maps.DirectionsService();
+ dr=new google.maps.DirectionsRenderer({map});
+ new google.maps.places.Autocomplete(origin);
+ new google.maps.places.Autocomplete(destination);
+}
 
-    directionsService = new google.maps.DirectionsService();
-    directionsRenderer = new google.maps.DirectionsRenderer({ map });
+function calculateFare(){
+ const o=clean(origin.value),d=clean(destination.value);
+ if(!o||!d){result.innerText='請輸入完整地址';return;}
 
-    new google.maps.places.Autocomplete(document.getElementById('origin'));
-    new google.maps.places.Autocomplete(document.getElementById('destination'));
-  }
-
-  function calculateFare() {
-    const o = cleanAddress(document.getElementById('origin').value);
-    const d = cleanAddress(document.getElementById('destination').value);
-
-    if (!o || !d) {
-      document.getElementById('result').innerText = '請輸入完整的起點與終點地址';
-      return;
-    }
-
-    directionsService.route({
-      origin: o,
-      destination: d,
-      travelMode: 'DRIVING',
-      avoidHighways: document.getElementById('avoidHighways').checked,
-      avoidTolls: document.getElementById('avoidTolls').checked
-    }, (res, status) => {
-      if (status !== 'OK') {
-        document.getElementById('result').innerText = '路線計算失敗，請確認地址';
-        return;
-      }
-
-      directionsRenderer.setDirections(res);
-
-      const leg = res.routes[0].legs[0];
-      const km = leg.distance.value / 1000;
-      const min = leg.duration.value / 60;
-
-      const fare = 100 + (km <= 15 ? km*15 : 15*15 + (km-15)*25) + min*3;
-
-      lastData = { o, d };
-
-      document.getElementById('result').innerText =
-        `距離：約 ${km.toFixed(1)} 公里\n` +
-        `時間：約 ${min.toFixed(0)} 分鐘\n` +
-        `預估車資：${fare.toFixed(0)} 元`;
-
-      document.getElementById('lineMsgContainer').innerText =
+ ds.route({
+  origin:o,destination:d,travelMode:'DRIVING',
+  avoidHighways:avoidHighways.checked,
+  avoidTolls:avoidTolls.checked
+ },(r,s)=>{
+  if(s!=='OK'){result.innerText='路線計算失敗';return;}
+  dr.setDirections(r);
+  const leg=r.routes[0].legs[0];
+  const km=leg.distance.value/1000;
+  const min=leg.duration.value/60;
+  const fare=100+(km<=15?km*15:15*15+(km-15)*25)+min*3;
+  lastData={o,d};
+  result.innerText=
+   `距離：約 ${km.toFixed(1)} 公里\n時間：約 ${min.toFixed(0)} 分鐘\n預估車資：${fare.toFixed(0)} 元`;
+  lineMsgContainer.innerText=
 `🚕 ASSEN⁹⁹ 叫車需求
 起點：${o}
 終點：${d}`;
-    });
+ });
+}
+
+function sendToLine(){
+ if(!lastData){alert('請先計算車資');return;}
+ const text=lineMsgContainer.innerText;
+ navigator.clipboard.writeText(text).then(()=>{
+  if(confirm('已自動複製叫車需求，貼上後立即為您尋車。\n是否要打開 LINE 官方聊天？')){
+    window.open('https://line.me/R/ti/p/@751cgaza','_blank');
   }
+ });
+}
 
-  function sendToLine() {
-    if (!lastData) {
-      alert('請先計算車資');
-      return;
-    }
-
-    const lineText = document.getElementById('lineMsgContainer').innerText;
-
-    // 一次完成自动复制 + 确认
-    if (confirm(`已自動複製叫車需求，貼上後立即為您尋車。\n是否要打開 LINE 官方聊天？`)) {
-      navigator.clipboard.writeText(lineText)
-        .then(() => {
-          window.open('https://line.me/R/ti/p/@751cgaza', '_blank');
-        })
-        .catch(() => alert('複製失敗，請手動複製'));
-    }
-  }
+function openLineOnly(){
+ window.open('https://line.me/R/ti/p/@751cgaza','_blank');
+}
 </script>
 
 <script async
-  src="https://maps.googleapis.com/maps/api/js?key=AIzaSyAL4_x2YFpSR0SY8ybPXLXy3U5-El1iHH4&libraries=places&callback=initMap">
+src="https://maps.googleapis.com/maps/api/js?key=AIzaSyAL4_x2YFpSR0SY8ybPXLXy3U5-El1iHH4&libraries=places&callback=initMap">
 </script>
 
 </body>
 </html>
-
-
-
