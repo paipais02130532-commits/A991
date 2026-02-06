@@ -102,26 +102,12 @@
     .line-btn { background: #06C755; }
     .line-btn:hover { background: #04B14F; }
 
-    .copy-btn { background: #FFB400; margin-top: 6px; }
-    .copy-btn:hover { background: #FFA000; }
-
     .result {
       margin-top: 16px;
       font-size: 18px;
       text-align: center;
       font-weight: bold;
       white-space: pre-line;
-    }
-
-    #lineMsgContainer {
-      margin-top: 10px;
-      background: #fff;
-      border: 1px dashed #4F606A;
-      padding: 10px;
-      border-radius: 10px;
-      font-size: 14px;
-      white-space: pre-wrap;
-      word-break: break-word;
     }
 
     #tip {
@@ -171,10 +157,8 @@
 
   <button onclick="calculateFare()">計算車資</button>
   <button class="line-btn" onclick="sendToLine()">📩 傳送到 LINE 官方</button>
-  <button class="copy-btn" onclick="copyLineMsg()">📋 複製訊息</button>
 
   <div class="result" id="result">—</div>
-  <div id="lineMsgContainer"></div>
 
   <div id="tip">
     💡 溫馨提醒：預估車資僅供參考<br>
@@ -187,7 +171,14 @@
 
 <script>
   let map, directionsService, directionsRenderer;
-  let lastData = null;
+  let lineMessage = '';
+
+  function cleanAddress(text) {
+    return text
+      .replace(/\[?(台灣|台湾)\]?/g, '')
+      .replace(/,\s*/g, '')
+      .trim();
+  }
 
   function initMap() {
     map = new google.maps.Map(document.getElementById("map"), {
@@ -203,17 +194,11 @@
   }
 
   function calculateFare() {
-    const originInput = document.getElementById('origin');
-    const destinationInput = document.getElementById('destination');
-    const avoidHighwaysInput = document.getElementById('avoidHighways');
-    const avoidTollsInput = document.getElementById('avoidTolls');
-    const resultDiv = document.getElementById('result');
+    const o = cleanAddress(document.getElementById('origin').value);
+    const d = cleanAddress(document.getElementById('destination').value);
 
-    const o = originInput.value.trim();
-    const d = destinationInput.value.trim();
-
-    if (o === "" || d === "") {
-      resultDiv.innerText = '請輸入完整的起點與終點地址';
+    if (!o || !d) {
+      document.getElementById('result').innerText = '請輸入完整的起點與終點地址';
       return;
     }
 
@@ -221,11 +206,11 @@
       origin: o,
       destination: d,
       travelMode: 'DRIVING',
-      avoidHighways: avoidHighwaysInput.checked,
-      avoidTolls: avoidTollsInput.checked
+      avoidHighways: document.getElementById('avoidHighways').checked,
+      avoidTolls: document.getElementById('avoidTolls').checked
     }, (res, status) => {
       if (status !== 'OK') {
-        resultDiv.innerText = '路線計算失敗，請確認地址';
+        document.getElementById('result').innerText = '路線計算失敗，請確認地址';
         return;
       }
 
@@ -235,18 +220,15 @@
       const km = leg.distance.value / 1000;
       const min = leg.duration.value / 60;
 
-      const fare = 100 + (km <= 15 ? km*15 : 15*15 + (km-15)*25) + min*3;
+      const fare = 100 + (km <= 15 ? km * 15 : 15 * 15 + (km - 15) * 25) + min * 3;
 
-      lastData = { o, d, km, fare };
-
-      resultDiv.innerText =
+      document.getElementById('result').innerText =
         `距離：約 ${km.toFixed(1)} 公里\n` +
         `時間：約 ${min.toFixed(0)} 分鐘\n` +
         `預估車資：${fare.toFixed(0)} 元`;
 
-      // LINE 訊息只包含上下車地址
-      const lineContainer = document.getElementById('lineMsgContainer');
-      lineContainer.innerText =
+      // 只准备「上下车地址」讯息
+      lineMessage =
 `🚕 ASSEN⁹⁹ 叫車需求
 起點：${o}
 終點：${d}`;
@@ -254,24 +236,18 @@
   }
 
   function sendToLine() {
-    if (!lastData) {
+    if (!lineMessage) {
       alert('請先計算車資');
       return;
     }
 
-    window.open(`https://line.me/R/ti/p/@751cgaza`, '_blank');
-    alert("LINE 官方聊天已開啟，請複製下方訊息並貼上傳送：\n\n" + document.getElementById('lineMsgContainer').innerText);
-  }
-
-  function copyLineMsg() {
-    const lineContainer = document.getElementById('lineMsgContainer');
-    if (!lineContainer.innerText) {
-      alert('請先計算車資');
-      return;
-    }
-    navigator.clipboard.writeText(lineContainer.innerText)
-      .then(() => alert('訊息已複製到剪貼簿！'))
-      .catch(() => alert('複製失敗，請手動複製'));
+    // 自动复制
+    navigator.clipboard.writeText(lineMessage).then(() => {
+      // 打开 LINE 官方
+      window.open('https://line.me/R/ti/p/@751cgaza', '_blank');
+    }).catch(() => {
+      alert('自動複製失敗，請手動複製');
+    });
   }
 </script>
 
